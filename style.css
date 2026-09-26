@@ -1610,7 +1610,6 @@ button {
   .telemetry-bar-row {
     grid-template-columns: 140px 1fr 30px;
   }
-}
   .hero-grid,
   .sim-pane.active,
   .pillars-grid,
