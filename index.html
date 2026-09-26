@@ -76,7 +76,7 @@
           </h1>
 
           <p class="hero-bio">
-            I am a researcher and systems engineer based in Bangalore, India. I investigate how learned representations preserve underlying domain structure across satellite Earth observation, low-resource speech, and clinical biosignals—while engineering high-throughput backend infrastructure reaching 220M+ users at Google scale.
+            I am a researcher and systems engineer based in Bangalore, India. I investigate how learned representations preserve underlying domain structure across satellite Earth observation, low-resource speech, and clinical biosignals—while engineering high-throughput backend infrastructure at Google scale.
           </p>
 
           <div class="hero-actions">
@@ -135,7 +135,7 @@
               <div class="hero-highlight-item">
                 <span class="highlight-bullet">•</span>
                 <div>
-                  <strong>Production Systems:</strong> Architected gift card engines &amp; Play × Wallet quests lifting revenue by <strong>$23M</strong> across <strong>220M Play Points members</strong>.
+                  <strong>Production Systems:</strong> Architected Google Play's Post-Purchase Promotions (P3) engine and Play × Wallet quests, enabling dynamic reward evaluation, multi-purchase tracking, and policy governance across global checkout flows.
                 </div>
               </div>
               <div class="hero-highlight-item">
@@ -179,7 +179,7 @@
               <span>📐 LaTeX Formula Auditor (CV)</span>
             </button>
             <button class="lab-tab" data-tab="promo-sim" role="tab" aria-selected="false">
-              <span>⚡ Google Play Spend Engine</span>
+              <span>⚡ Google Play P3 Engine</span>
             </button>
           </div>
 
@@ -415,24 +415,24 @@
               </div>
             </div>
 
-            <!-- 5. GOOGLE PLAY SPEND ENGINE -->
+            <!-- 5. GOOGLE PLAY P3 ENGINE -->
             <div class="sim-pane" id="pane-promo-sim" role="tabpanel">
               <div class="sim-left">
                 <div class="sim-metrics-grid">
                   <div class="metric-card">
                     <span class="metric-label">Test Suite Runtime</span>
-                    <span class="metric-value val-good" id="promo-runtime-val">-28%</span>
+                    <span class="metric-value val-good" id="promo-runtime-val">OPTIMIZED</span>
                     <span class="metric-sub">Via offer_type cache</span>
                   </div>
                   <div class="metric-card">
                     <span class="metric-label">Test Flakiness</span>
-                    <span class="metric-value val-good" id="promo-flake-val">-42%</span>
+                    <span class="metric-value val-good" id="promo-flake-val">ELIMINATED</span>
                     <span class="metric-sub">Deterministic state</span>
                   </div>
                   <div class="metric-card">
-                    <span class="metric-label">Play × Wallet Revenue</span>
-                    <span class="metric-value val-blue">$23M / +20%</span>
-                    <span class="metric-sub">Across 220M members</span>
+                    <span class="metric-label">P3 Engine</span>
+                    <span class="metric-value val-blue">ACTIVE</span>
+                    <span class="metric-sub">Post-Purchase Promotions</span>
                   </div>
                   <div class="metric-card">
                     <span class="metric-label">Policy Governance</span>
@@ -442,17 +442,17 @@
                 </div>
 
                 <div style="background:var(--bg-subtle); padding:1rem; border-radius:var(--radius-sm); border:1px solid var(--border-light); font-family:var(--font-mono); font-size:0.78rem; line-height:1.6;" id="promo-trace-box">
-                  [TRACE 01] Multi-purchase quest event received...<br>
-                  [TRACE 02] Resolved campaign via feature-flagged offer_type cache (-28% test time).<br>
-                  [TRACE 03] Jetpack Compose quest surface rendered → +20% enrollment lift ($23M revenue).
+                  [TRACE 01] Multi-purchase quest event received via P3 pipeline...<br>
+                  [TRACE 02] Resolved campaign via feature-flagged offer_type cache.<br>
+                  [TRACE 03] Jetpack Compose quest surface rendered → user enrollment lifted and reward issued.
                 </div>
               </div>
 
               <div class="sim-right">
                 <div>
-                  <h3 class="sim-title">Google Play Gift Card &amp; Spend Engine</h3>
+                  <h3 class="sim-title">Google Play Post-Purchase Promotions (P3)</h3>
                   <p class="sim-desc" style="margin-top:0.4rem;">
-                    Simulates my production work on <strong>Google Play Promotions</strong>: cumulative gross-spend tracking preventing cart-splitting exploitation, shadow-traffic deprecation (~50 edge cases audited), and scalable cache migration across 220M Play Points members.
+                    Simulates my production work on <strong>Google Play Post-Purchase Promotions (P3)</strong>: cumulative gross-spend tracking preventing cart-splitting exploitation, shadow-traffic dual-read validation, and scalable cache migration across global checkout flows.
                   </p>
                 </div>
 
@@ -468,7 +468,7 @@
                 <div class="sim-control-group">
                   <span class="sim-control-label">Transaction Scenario</span>
                   <select id="promo-scenario-select" class="sim-select">
-                    <option value="quest" selected>Google Play × Google Wallet Multi-Purchase Quest ($23M)</option>
+                    <option value="quest" selected>Google Play × Google Wallet Multi-Purchase Quest</option>
                     <option value="exploit">Split-Cart Refund Exploitation Attempt</option>
                     <option value="giftcard">Multi-Currency Gift Card Threshold Checkout</option>
                   </select>
@@ -700,17 +700,17 @@
               <span class="timeline-dates">Jun 2025 – Present</span>
             </div>
             <p class="timeline-summary">
-              Architected the in-app gift card promotion engine and Play × Wallet quests (+20% enrollment, $23M revenue across 220M members); deprecated legacy post-purchase infrastructure via shadow traffic and built a scalable <code>offer_type</code> cache (-28% test runtime, -42% flakiness).
+              Architected Google Play's Post-Purchase Promotions (P3) engine and Play × Wallet quests, enabling multi-purchase reward evaluation and policy governance; deprecated legacy promotion infrastructure via shadow traffic and built a scalable <code>offer_type</code> cache to improve test stability and execution speed.
             </p>
             <button class="timeline-toggle-btn" type="button">
               <span>View details ↓</span>
             </button>
             <div class="timeline-expandable">
               <ul class="timeline-bullets">
-                <li><strong>In-App Gift Card Promotion Engine:</strong> Led cross-team backend architecture for multi-purchase in-app gift card promotions, designing cumulative gross-spend tracking primitives and policy governance rules preventing promotion exploitation across global carts.</li>
-                <li><strong>Google Play × Google Wallet Quests ($23M Impact):</strong> Built Play Store promotional surfaces and quest banners in Jetpack Compose and extended backend schemas, lifting user enrollment by 20% and generating $23M in incremental revenue across 220M Play Points members.</li>
-                <li><strong>Shadow-Traffic Deprecation &amp; Cache Migration:</strong> Safely deprecated legacy post-purchase promotion infrastructure via shadow traffic (~50 edge cases resolved) and executed a feature-flagged migration of legacy campaign mappings to a scalable <code>offer_type</code> cache architecture, cutting test runtime by 28% and flakiness by 42%.</li>
-                <li><strong>AI-Assisted Engineering:</strong> Leveraged AI workflows to accelerate test authoring (10x velocity) and earned <strong>4 peer recognition awards</strong> for on-call triage and cross-team execution.</li>
+                <li><strong>Post-Purchase Promotions (P3) &amp; Gift Card Engine:</strong> Led cross-team backend architecture for multi-purchase in-app gift card promotions within the P3 pipeline, designing cumulative gross-spend tracking primitives and policy governance rules preventing promotion exploitation across global carts.</li>
+                <li><strong>Google Play × Google Wallet Quests:</strong> Built Play Store promotional surfaces and quest banners in Jetpack Compose and extended backend schemas, lifting user enrollment and generating incremental revenue across Play Points members.</li>
+                <li><strong>Shadow-Traffic Deprecation &amp; Cache Migration:</strong> Safely deprecated legacy post-purchase promotion infrastructure via shadow traffic validation, and executed a feature-flagged migration of legacy campaign mappings to a scalable <code>offer_type</code> cache architecture to systematically reduce test runtime and flakiness.</li>
+                <li><strong>AI-Assisted Engineering:</strong> Leveraged AI workflows to accelerate test authoring velocity and earned peer recognition awards for on-call triage and cross-team execution.</li>
               </ul>
               <div class="timeline-tags">
                 <span class="tag-pill">Java</span>

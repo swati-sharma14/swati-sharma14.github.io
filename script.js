@@ -587,9 +587,9 @@ document.addEventListener('DOMContentLoaded', () => {
     let lines = [];
     if (scen === 'quest') {
       lines = [
-        `[TRACE 01] Multi-purchase quest event received (220M Play Points pool)...`,
-        `[TRACE 02] Resolved campaign via ${arch === 'legacy' ? 'hardcoded campaign map' : 'feature-flagged offer_type cache (-28% test time)'}.`,
-        `[TRACE 03] Jetpack Compose quest surface rendered → +20% enrollment lift ($23M revenue).`
+        `[TRACE 01] Multi-purchase quest event received via P3 pipeline...`,
+        `[TRACE 02] Resolved campaign via ${arch === 'legacy' ? 'hardcoded campaign map' : 'feature-flagged offer_type cache'}.`,
+        `[TRACE 03] Jetpack Compose quest surface rendered → user enrollment lifted and reward issued.`
       ];
     } else if (scen === 'exploit') {
       lines = [
@@ -726,7 +726,7 @@ document.addEventListener('DOMContentLoaded', () => {
   const replResponses = {
     help: 'Commands: thesis, google, iiitd, cress, tasklens, adhd, bibtex, clear',
     thesis: 'Core Thesis: How to build multimodal representations that are interpretable, utility-aware, and reference-free.',
-    google: 'During Google: SWE II on Play Promotions ($23M revenue, offer_type cache) & Researcher 20% Time at DeepMind (CRESS).',
+    google: 'During Google: SWE II on Google Play Post-Purchase Promotions (P3) & Researcher 20% Time at DeepMind (CRESS).',
     iiitd: 'Before Google: B.Tech CSAI @ IIIT-Delhi (GPA 8.36/10), HMI Lab (ADHD in CIBM 2025), SBILab (Task-Lens at LREC 2026).',
     cress: 'CRESS: Dual-encoder reference-free evaluation for satellite super-resolution (NeurIPS TCCML 2026).',
     tasklens: 'Task-Lens: Cross-task speech profiling across 50 Indian datasets, 90K+ hours, 26 languages (LREC 2026).',
