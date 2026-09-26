@@ -779,7 +779,6 @@ document.addEventListener('DOMContentLoaded', () => {
     { label: '📐 Launch LaTeX Formula Auditor Sandbox', cat: 'Lab', run: () => switchLabTab('latex-sim', true) },
     { label: '⚡ Launch Google Play Spend Engine Simulator', cat: 'Lab', run: () => switchLabTab('promo-sim', true) },
     { label: 'Toggle Light / Dark Theme', cat: 'Theme', run: toggleTheme },
-    { label: 'Download 1-Page Resume (PDF)', cat: 'Resume', run: () => window.open('assets/Swati_Sharma_Resume.pdf', '_blank') },
     { label: 'Filter: During Google (2025–Present)', cat: 'Filter', run: () => applyEra('during-google') },
     { label: 'Filter: Before Google (2021–2025)', cat: 'Filter', run: () => applyEra('before-google') },
     { label: 'Filter: All Eras (2021–Present)', cat: 'Filter', run: () => applyEra('all') }
