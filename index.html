@@ -22,7 +22,7 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600;700&family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;0,6..72,600;1,6..72,400;1,6..72,500&family=Plus+Jakarta+Sans:wght@600;700;800&display=swap" rel="stylesheet">
 
-  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="style.css?v=2.1">
 </head>
 <body>
 
@@ -44,11 +44,6 @@
       </nav>
 
       <div class="nav-actions">
-        <button id="analytics-btn" class="btn-cmd" title="Site Telemetry & Post-Hoc Analysis">
-          <span>Pulse</span>
-          <span class="pulse-dot"></span>
-        </button>
-
         <button id="cmd-btn" class="btn-cmd" title="Command Palette (⌘K / Ctrl+K)">
           <span>Explore</span>
           <kbd class="cmd-kbd">⌘K</kbd>
@@ -1100,73 +1095,44 @@
          SECTION 6: VISITOR FEEDBACK & GUESTBOOK
          ====================================================================== -->
     <section id="feedback" class="section">
-      <div class="container">
-        <div class="section-head">
-          <span class="section-kicker">Visitor Feedback &amp; Guestbook</span>
+      <div class="container" style="max-width: 680px;">
+        <div class="section-head" style="text-align: center; margin-bottom: 2rem;">
+          <span class="section-kicker">Get in Touch</span>
           <h2 class="section-title">Leave a Note or Quick Feedback</h2>
-          <p class="section-desc">
-            Whether you are exploring my research papers, evaluating systems architecture, or considering an opportunity—I'd love to hear your thoughts.
+          <p class="section-desc" style="max-width: 540px; margin: 0.5rem auto 0;">
+            Have thoughts on the research papers, interactive simulations, or backend architecture? Feel free to drop a note below.
           </p>
         </div>
 
         <div class="feedback-card">
           <form id="feedback-form" class="feedback-form">
-            <div class="feedback-row">
-              <label class="feedback-label">I am visiting as a:</label>
-              <div class="feedback-role-chips" id="role-chips">
-                <button type="button" class="role-chip active" data-role="Recruiter">💼 Recruiter</button>
-                <button type="button" class="role-chip" data-role="Researcher / Faculty">🔬 Researcher / Faculty</button>
-                <button type="button" class="role-chip" data-role="Software Engineer">💻 Software Engineer</button>
-                <button type="button" class="role-chip" data-role="Student">🎓 Student</button>
-                <button type="button" class="role-chip" data-role="Other">👋 Other</button>
-              </div>
-            </div>
-
-            <div class="feedback-row">
-              <label class="feedback-label">What caught your attention?</label>
-              <div class="feedback-sentiment-chips" id="sentiment-chips">
-                <button type="button" class="sent-chip active" data-tag="Inspiring Research">✨ Inspiring Research</button>
-                <button type="button" class="sent-chip" data-tag="Strong Systems">⚡ Strong Systems</button>
-                <button type="button" class="sent-chip" data-tag="Interactive Labs">🧪 Interactive Labs</button>
-                <button type="button" class="sent-chip" data-tag="Collaboration Idea">🤝 Collaboration</button>
-                <button type="button" class="sent-chip" data-tag="Constructive Feedback">📝 Constructive Note</button>
-              </div>
-            </div>
-
-            <div class="feedback-row">
-              <label for="feedback-message" class="feedback-label">Your message or feedback:</label>
-              <textarea id="feedback-message" class="feedback-textarea" rows="3" placeholder="Share a quick note, reaction, suggestion, or say hi..." required></textarea>
+            <div class="feedback-field">
+              <label for="feedback-message" class="feedback-label">Your Message or Feedback <span style="color:var(--accent-primary);">*</span></label>
+              <textarea id="feedback-message" class="feedback-textarea" rows="4" placeholder="Share your feedback, questions, or say hello..." required></textarea>
             </div>
 
             <div class="feedback-row-split">
-              <div class="feedback-col">
-                <label for="feedback-author" class="feedback-label">Your Name / GitHub (optional):</label>
-                <input type="text" id="feedback-author" class="feedback-input" placeholder="e.g. Alex, @handle">
+              <div class="feedback-field">
+                <label for="feedback-author" class="feedback-label">Your Name <span style="font-size:0.75rem; color:var(--text-muted); font-weight:400;">(optional)</span></label>
+                <input type="text" id="feedback-author" class="feedback-input" placeholder="e.g. Alex Chen">
               </div>
-              <div class="feedback-col">
-                <label for="feedback-email" class="feedback-label">Your Email (optional, for a reply):</label>
-                <input type="email" id="feedback-email" class="feedback-input" placeholder="alex@domain.com">
+              <div class="feedback-field">
+                <label for="feedback-email" class="feedback-label">Your Email <span style="font-size:0.75rem; color:var(--text-muted); font-weight:400;">(optional, for a reply)</span></label>
+                <input type="email" id="feedback-email" class="feedback-input" placeholder="alex@example.com">
               </div>
             </div>
 
             <div class="feedback-actions">
               <button type="submit" id="feedback-submit-btn" class="btn btn-primary">
-                <span>Send Note to Swati</span>
+                <span>Send Note</span>
                 <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="22" y1="2" x2="11" y2="13"></line><polygon points="22 2 15 22 11 13 2 9 22 2"></polygon></svg>
               </button>
-              <button type="button" id="feedback-email-draft-btn" class="btn btn-outline">
-                <span>Open as Email Draft ↗</span>
+              <button type="button" id="feedback-email-draft-btn" class="btn btn-ghost btn-sm">
+                <span>Open in Mail Client ↗</span>
               </button>
               <span id="feedback-status" class="feedback-status" aria-live="polite"></span>
             </div>
           </form>
-
-          <div class="feedback-feed-box" id="feedback-feed-box">
-            <h4 class="feedback-feed-title">Recent Visitor Notes &amp; Feedback</h4>
-            <div id="feedback-feed-list" class="feedback-feed-list">
-              <!-- Rendered dynamically -->
-            </div>
-          </div>
         </div>
       </div>
     </section>
@@ -1178,9 +1144,11 @@
       <div>
         <strong>Swati Sharma</strong> · Software Engineer II @ Google &amp; Researcher @ Google DeepMind · B.Tech CSAI, IIIT-Delhi
         <div style="margin-top:0.5rem; display:flex; align-items:center; gap:0.6rem; flex-wrap:wrap;">
-          <img src="https://hits.sh/swati-sharma14.github.io.svg?label=views&color=0d9488" alt="Views" class="visitor-hits-badge" title="Live Views Badge">
+          <span class="views-pill" id="footer-views-badge" title="Page views tracked across sessions">
+            👁️ <strong id="footer-views-count">1</strong> views
+          </span>
           <button id="footer-analytics-btn" class="btn btn-ghost btn-sm" type="button" style="padding:0.25rem 0.55rem; font-size:0.75rem;">
-            📊 Site Telemetry &amp; Analysis
+            📊 Site Telemetry &amp; Insights
           </button>
           <a href="#feedback" class="btn btn-ghost btn-sm" style="padding:0.25rem 0.55rem; font-size:0.75rem;">
             💬 Leave Feedback
@@ -1298,6 +1266,6 @@
   <!-- Toast Notification -->
   <div id="toast" class="toast" role="status" aria-live="polite">Copied to clipboard!</div>
 
-  <script src="script.js"></script>
+  <script src="script.js?v=2.1"></script>
 </body>
 </html>

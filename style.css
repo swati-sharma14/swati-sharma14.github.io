@@ -1378,17 +1378,15 @@ button {
 }
 
 /* ==========================================================================
-   FEEDBACK & GUESTBOOK SECTION
+   FEEDBACK & GET IN TOUCH SECTION
    ========================================================================== */
 .feedback-card {
   background: var(--bg-card);
   border: 1px solid var(--border-light);
   border-radius: var(--radius-lg);
-  padding: 2.25rem;
+  padding: 2rem 2.25rem;
   box-shadow: var(--shadow-subtle);
-  display: flex;
-  flex-direction: column;
-  gap: 2rem;
+  transition: var(--transition);
 }
 
 .feedback-form {
@@ -1397,19 +1395,7 @@ button {
   gap: 1.25rem;
 }
 
-.feedback-row {
-  display: flex;
-  flex-direction: column;
-  gap: 0.5rem;
-}
-
-.feedback-row-split {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 1.25rem;
-}
-
-.feedback-col {
+.feedback-field {
   display: flex;
   flex-direction: column;
   gap: 0.4rem;
@@ -1419,40 +1405,6 @@ button {
   font-size: 0.82rem;
   font-weight: 600;
   color: var(--text-secondary);
-}
-
-.feedback-role-chips,
-.feedback-sentiment-chips {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.5rem;
-}
-
-.role-chip,
-.sent-chip {
-  padding: 0.45rem 0.85rem;
-  font-size: 0.8rem;
-  font-weight: 500;
-  border-radius: var(--radius-pill);
-  border: 1px solid var(--border-light);
-  background: var(--bg-subtle);
-  color: var(--text-secondary);
-  transition: var(--transition);
-  cursor: pointer;
-}
-
-.role-chip:hover,
-.sent-chip:hover {
-  border-color: var(--border-medium);
-  color: var(--text-main);
-}
-
-.role-chip.active,
-.sent-chip.active {
-  background: var(--accent-subtle);
-  border-color: var(--accent-primary);
-  color: var(--accent-primary);
-  font-weight: 600;
 }
 
 .feedback-textarea,
@@ -1466,6 +1418,13 @@ button {
   background: var(--bg-subtle);
   color: var(--text-main);
   transition: var(--transition);
+  box-sizing: border-box;
+}
+
+.feedback-textarea {
+  min-height: 110px;
+  resize: vertical;
+  line-height: 1.5;
 }
 
 .feedback-textarea:focus,
@@ -1473,12 +1432,26 @@ button {
   outline: none;
   border-color: var(--accent-primary);
   background: var(--bg-card);
+  box-shadow: 0 0 0 3px var(--accent-subtle);
+}
+
+.feedback-row-split {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1.25rem;
+}
+
+@media (max-width: 640px) {
+  .feedback-row-split {
+    grid-template-columns: 1fr;
+    gap: 1rem;
+  }
 }
 
 .feedback-actions {
   display: flex;
   align-items: center;
-  gap: 0.85rem;
+  gap: 1rem;
   flex-wrap: wrap;
   margin-top: 0.5rem;
 }
@@ -1489,70 +1462,23 @@ button {
   color: var(--text-muted);
 }
 
-.feedback-feed-box {
-  border-top: 1px solid var(--border-light);
-  padding-top: 1.5rem;
-}
-
-.feedback-feed-title {
-  font-family: var(--font-display);
-  font-size: 0.92rem;
-  font-weight: 700;
-  color: var(--text-secondary);
-  margin-bottom: 1rem;
-}
-
-.feedback-feed-list {
-  display: flex;
-  flex-direction: column;
-  gap: 0.75rem;
-  max-height: 260px;
-  overflow-y: auto;
-}
-
-.feed-entry {
-  padding: 0.85rem 1rem;
-  border-radius: var(--radius-sm);
+.views-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  padding: 0.25rem 0.65rem;
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  font-weight: 500;
+  border-radius: var(--radius-pill);
   background: var(--bg-subtle);
   border: 1px solid var(--border-light);
-  display: flex;
-  flex-direction: column;
-  gap: 0.35rem;
-}
-
-.feed-entry-head {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  font-size: 0.78rem;
-}
-
-.feed-entry-author {
-  font-weight: 600;
-  color: var(--text-main);
-}
-
-.feed-entry-date {
-  font-family: var(--font-mono);
-  color: var(--text-muted);
-  font-size: 0.72rem;
-}
-
-.feed-entry-text {
-  font-size: 0.84rem;
   color: var(--text-secondary);
-  line-height: 1.45;
 }
 
-.feed-tag {
-  display: inline-block;
-  padding: 0.15rem 0.45rem;
-  border-radius: 4px;
-  background: var(--bg-card);
-  border: 1px solid var(--border-light);
-  font-size: 0.72rem;
+.views-pill strong {
   color: var(--accent-primary);
-  font-weight: 500;
+  font-weight: 700;
 }
 
 /* ==========================================================================

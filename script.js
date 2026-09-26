@@ -873,12 +873,14 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   }, { passive: true });
 
-  // Real-time visitor counter & local telemetry
+  // Real-time visitor counter: increments on every page open or refresh
   function initViewCounter() {
-    const localHits = parseInt(localStorage.getItem('swati_local_hits') || '18', 10) + 1;
-    localStorage.setItem('swati_local_hits', localHits.toString());
-    if (footerViewsCount) footerViewsCount.textContent = `${localHits}`;
-    if (teleTotalViews) teleTotalViews.textContent = `${localHits}+`;
+    let views = parseInt(localStorage.getItem('swati_views_counter') || '0', 10);
+    views += 1;
+    localStorage.setItem('swati_views_counter', views.toString());
+
+    if (footerViewsCount) footerViewsCount.textContent = views.toString();
+    if (teleTotalViews) teleTotalViews.textContent = views.toString();
   }
   initViewCounter();
 
@@ -928,180 +930,91 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   // --------------------------------------------------------------------------
-  // 13. Visitor Feedback & Guestbook Engine
+  // 13. Visitor Feedback Engine
   // --------------------------------------------------------------------------
   const feedbackForm = document.getElementById('feedback-form');
-  const roleChips = document.querySelectorAll('#role-chips .role-chip');
-  const sentimentChips = document.querySelectorAll('#sentiment-chips .sent-chip');
   const feedbackMsg = document.getElementById('feedback-message');
   const feedbackAuthor = document.getElementById('feedback-author');
   const feedbackEmail = document.getElementById('feedback-email');
   const feedbackStatus = document.getElementById('feedback-status');
   const feedbackSubmitBtn = document.getElementById('feedback-submit-btn');
   const feedbackEmailDraftBtn = document.getElementById('feedback-email-draft-btn');
-  const feedbackFeedList = document.getElementById('feedback-feed-list');
 
-  let selectedRole = 'Recruiter';
-  let selectedSentiment = 'Inspiring Research';
-
-  roleChips.forEach(chip => {
-    chip.addEventListener('click', () => {
-      roleChips.forEach(c => c.classList.remove('active'));
-      chip.classList.add('active');
-      selectedRole = chip.getAttribute('data-role');
-    });
-  });
-
-  sentimentChips.forEach(chip => {
-    chip.addEventListener('click', () => {
-      sentimentChips.forEach(c => c.classList.remove('active'));
-      chip.classList.add('active');
-      selectedSentiment = chip.getAttribute('data-tag');
-    });
-  });
-
-  function loadFeedbackFeed() {
-    if (!feedbackFeedList) return;
-    let stored = [];
-    try {
-      stored = JSON.parse(localStorage.getItem('swati_feedback_entries') || '[]');
-    } catch (e) {
-      stored = [];
-    }
-
-    if (stored.length === 0) {
-      stored = [
-        {
-          author: 'Research Collaborator',
-          role: 'Researcher / Faculty',
-          sentiment: 'Inspiring Research',
-          date: 'Sep 2026',
-          text: 'The CRESS super-resolution auditor and task-lens transferability matrix are exceptionally well motivated. Looking forward to your upcoming publications!'
-        },
-        {
-          author: 'Engineering Lead',
-          role: 'Software Engineer',
-          sentiment: 'Strong Systems',
-          date: 'Sep 2026',
-          text: 'Great demonstration of post-purchase promotion engine governance and cache migration. Clear, production-tested systems thinking.'
-        }
-      ];
-    }
-
-    feedbackFeedList.innerHTML = '';
-    stored.forEach(item => {
-      const card = document.createElement('div');
-      card.className = 'feed-entry';
-      card.innerHTML = `
-        <div class="feed-entry-head">
-          <span class="feed-entry-author">${escapeHTML(item.author || 'Anonymous')} <span style="font-weight:400; color:var(--text-muted); font-size:0.75rem;">(${escapeHTML(item.role || 'Visitor')})</span></span>
-          <span class="feed-entry-date">${escapeHTML(item.date || 'Recent')}</span>
-        </div>
-        <div style="margin:0.25rem 0;">
-          <span class="feed-tag">${escapeHTML(item.sentiment || 'Feedback')}</span>
-        </div>
-        <div class="feed-entry-text">${escapeHTML(item.text)}</div>
-      `;
-      feedbackFeedList.appendChild(card);
-    });
+  function triggerEmailDraft(author, email, message) {
+    const sender = author || 'Visitor';
+    const subject = encodeURIComponent(`Portfolio Feedback from ${sender}`);
+    const body = encodeURIComponent(`${message}\n\n--\nFrom: ${sender}\nContact: ${email || 'None provided'}`);
+    window.open(`mailto:swatisharma14career@gmail.com?subject=${subject}&body=${body}`, '_blank');
   }
 
-  function escapeHTML(str) {
-    if (!str) return '';
-    return str.replace(/[&<>'"]/g, tag => ({
-      '&': '&amp;',
-      '<': '&lt;',
-      '>': '&gt;',
-      "'": '&#39;',
-      '"': '&quot;'
-    }[tag] || tag));
-  }
-
-  loadFeedbackFeed();
-
-  // Handle Feedback Submission
   if (feedbackForm) {
     feedbackForm.addEventListener('submit', async (e) => {
       e.preventDefault();
       const message = feedbackMsg ? feedbackMsg.value.trim() : '';
       if (!message) return;
 
-      const author = feedbackAuthor && feedbackAuthor.value.trim() ? feedbackAuthor.value.trim() : 'Anonymous Visitor';
+      const author = feedbackAuthor && feedbackAuthor.value.trim() ? feedbackAuthor.value.trim() : 'Anonymous';
       const email = feedbackEmail && feedbackEmail.value.trim() ? feedbackEmail.value.trim() : '';
 
       if (feedbackSubmitBtn) {
         feedbackSubmitBtn.disabled = true;
-        feedbackSubmitBtn.textContent = 'Sending...';
+        feedbackSubmitBtn.innerHTML = '<span>Sending...</span>';
       }
       if (feedbackStatus) {
-        feedbackStatus.textContent = 'Dispatching note...';
+        feedbackStatus.textContent = 'Sending note...';
         feedbackStatus.style.color = 'var(--text-muted)';
       }
 
-      const newEntry = {
-        author: author,
-        role: selectedRole,
-        sentiment: selectedSentiment,
-        email: email,
-        text: message,
-        date: new Date().toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })
-      };
-
-      // 1. Save to local feed immediately
       try {
-        let existing = JSON.parse(localStorage.getItem('swati_feedback_entries') || '[]');
-        existing.unshift(newEntry);
-        localStorage.setItem('swati_feedback_entries', JSON.stringify(existing));
-        loadFeedbackFeed();
-      } catch (err) {}
+        const payload = {
+          name: author,
+          email: email || 'no-reply@portfolio.visitor',
+          message: message,
+          _subject: `New Portfolio Note from ${author}`,
+          _template: 'table'
+        };
 
-      // 2. Submit via FormSubmit AJAX to swatisharma14career@gmail.com
-      try {
-        await fetch('https://formsubmit.co/ajax/swatisharma14career@gmail.com', {
+        const res = await fetch('https://formsubmit.co/ajax/swatisharma14career@gmail.com', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
             'Accept': 'application/json'
           },
-          body: JSON.stringify({
-            Visitor_Role: selectedRole,
-            Category: selectedSentiment,
-            Author: author,
-            Email: email || 'Not provided',
-            Feedback_Message: message,
-            _subject: `[Portfolio Feedback] ${selectedSentiment} from ${author} (${selectedRole})`
-          })
+          body: JSON.stringify(payload)
         });
-      } catch (err) {}
 
-      if (feedbackSubmitBtn) {
-        feedbackSubmitBtn.disabled = false;
-        feedbackSubmitBtn.innerHTML = `<span>Sent!</span> ✓`;
-        setTimeout(() => {
-          feedbackSubmitBtn.innerHTML = `<span>Send Note to Swati</span> <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="22" y1="2" x2="11" y2="13"></line><polygon points="22 2 15 22 11 13 2 9 22 2"></polygon></svg>`;
-        }, 3000);
+        if (res.ok) {
+          if (feedbackStatus) {
+            feedbackStatus.textContent = '✓ Note sent directly to Swati. Thank you!';
+            feedbackStatus.style.color = 'var(--accent-primary)';
+          }
+          feedbackForm.reset();
+          showToast('Thank you! Your note has been sent to Swati.');
+        } else {
+          throw new Error('Endpoint error');
+        }
+      } catch (err) {
+        if (feedbackStatus) {
+          feedbackStatus.textContent = 'Opening mail client draft...';
+          feedbackStatus.style.color = 'var(--text-secondary)';
+        }
+        showToast('Opening mail client draft...');
+        triggerEmailDraft(author, email, message);
+      } finally {
+        if (feedbackSubmitBtn) {
+          feedbackSubmitBtn.disabled = false;
+          feedbackSubmitBtn.innerHTML = '<span>Send Note</span> <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="22" y1="2" x2="11" y2="13"></line><polygon points="22 2 15 22 11 13 2 9 22 2"></polygon></svg>';
+        }
       }
-
-      if (feedbackStatus) {
-        feedbackStatus.textContent = 'Thank you! Your note has been dispatched to Swati.';
-        feedbackStatus.style.color = 'var(--accent-primary)';
-      }
-
-      if (feedbackMsg) feedbackMsg.value = '';
-      if (feedbackAuthor) feedbackAuthor.value = '';
-      if (feedbackEmail) feedbackEmail.value = '';
-      showToast('Feedback submitted! Thank you.');
     });
   }
 
-  // Open as Email Draft fallback
   if (feedbackEmailDraftBtn) {
     feedbackEmailDraftBtn.addEventListener('click', () => {
-      const author = feedbackAuthor && feedbackAuthor.value.trim() ? feedbackAuthor.value.trim() : 'Visitor';
-      const msg = feedbackMsg ? feedbackMsg.value.trim() : '';
-      const subject = encodeURIComponent(`[Portfolio Note] ${selectedSentiment} - ${author}`);
-      const body = encodeURIComponent(`Hi Swati,\n\nI was exploring your portfolio site as a ${selectedRole}.\n\nFeedback / Note:\n${msg || '(Write your note here)'}\n\nBest regards,\n${author}`);
-      window.location.href = `mailto:swatisharma14career@gmail.com?subject=${subject}&body=${body}`;
+      const message = feedbackMsg ? feedbackMsg.value.trim() : '';
+      const author = feedbackAuthor ? feedbackAuthor.value.trim() : '';
+      const email = feedbackEmail ? feedbackEmail.value.trim() : '';
+      triggerEmailDraft(author, email, message || 'Hi Swati,\n\nI was exploring your portfolio and wanted to reach out regarding...');
     });
   }
 
