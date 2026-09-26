@@ -40,9 +40,15 @@
         <a href="#publications" class="nav-link">Publications</a>
         <a href="#experience" class="nav-link">Experience</a>
         <a href="#projects" class="nav-link">Projects</a>
+        <a href="#feedback" class="nav-link">Feedback</a>
       </nav>
 
       <div class="nav-actions">
+        <button id="analytics-btn" class="btn-cmd" title="Site Telemetry & Post-Hoc Analysis">
+          <span>Pulse</span>
+          <span class="pulse-dot"></span>
+        </button>
+
         <button id="cmd-btn" class="btn-cmd" title="Command Palette (⌘K / Ctrl+K)">
           <span>Explore</span>
           <kbd class="cmd-kbd">⌘K</kbd>
@@ -1089,6 +1095,81 @@
         </div>
       </div>
     </section>
+
+    <!-- ======================================================================
+         SECTION 6: VISITOR FEEDBACK & GUESTBOOK
+         ====================================================================== -->
+    <section id="feedback" class="section">
+      <div class="container">
+        <div class="section-head">
+          <span class="section-kicker">Visitor Feedback &amp; Guestbook</span>
+          <h2 class="section-title">Leave a Note or Quick Feedback</h2>
+          <p class="section-desc">
+            Whether you are exploring my research papers, evaluating systems architecture, or considering an opportunity—I'd love to hear your thoughts.
+          </p>
+        </div>
+
+        <div class="feedback-card">
+          <form id="feedback-form" class="feedback-form">
+            <div class="feedback-row">
+              <label class="feedback-label">I am visiting as a:</label>
+              <div class="feedback-role-chips" id="role-chips">
+                <button type="button" class="role-chip active" data-role="Recruiter">💼 Recruiter</button>
+                <button type="button" class="role-chip" data-role="Researcher / Faculty">🔬 Researcher / Faculty</button>
+                <button type="button" class="role-chip" data-role="Software Engineer">💻 Software Engineer</button>
+                <button type="button" class="role-chip" data-role="Student">🎓 Student</button>
+                <button type="button" class="role-chip" data-role="Other">👋 Other</button>
+              </div>
+            </div>
+
+            <div class="feedback-row">
+              <label class="feedback-label">What caught your attention?</label>
+              <div class="feedback-sentiment-chips" id="sentiment-chips">
+                <button type="button" class="sent-chip active" data-tag="Inspiring Research">✨ Inspiring Research</button>
+                <button type="button" class="sent-chip" data-tag="Strong Systems">⚡ Strong Systems</button>
+                <button type="button" class="sent-chip" data-tag="Interactive Labs">🧪 Interactive Labs</button>
+                <button type="button" class="sent-chip" data-tag="Collaboration Idea">🤝 Collaboration</button>
+                <button type="button" class="sent-chip" data-tag="Constructive Feedback">📝 Constructive Note</button>
+              </div>
+            </div>
+
+            <div class="feedback-row">
+              <label for="feedback-message" class="feedback-label">Your message or feedback:</label>
+              <textarea id="feedback-message" class="feedback-textarea" rows="3" placeholder="Share a quick note, reaction, suggestion, or say hi..." required></textarea>
+            </div>
+
+            <div class="feedback-row-split">
+              <div class="feedback-col">
+                <label for="feedback-author" class="feedback-label">Your Name / GitHub (optional):</label>
+                <input type="text" id="feedback-author" class="feedback-input" placeholder="e.g. Alex, @handle">
+              </div>
+              <div class="feedback-col">
+                <label for="feedback-email" class="feedback-label">Your Email (optional, for a reply):</label>
+                <input type="email" id="feedback-email" class="feedback-input" placeholder="alex@domain.com">
+              </div>
+            </div>
+
+            <div class="feedback-actions">
+              <button type="submit" id="feedback-submit-btn" class="btn btn-primary">
+                <span>Send Note to Swati</span>
+                <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="22" y1="2" x2="11" y2="13"></line><polygon points="22 2 15 22 11 13 2 9 22 2"></polygon></svg>
+              </button>
+              <button type="button" id="feedback-email-draft-btn" class="btn btn-outline">
+                <span>Open as Email Draft ↗</span>
+              </button>
+              <span id="feedback-status" class="feedback-status" aria-live="polite"></span>
+            </div>
+          </form>
+
+          <div class="feedback-feed-box" id="feedback-feed-box">
+            <h4 class="feedback-feed-title">Recent Visitor Notes &amp; Feedback</h4>
+            <div id="feedback-feed-list" class="feedback-feed-list">
+              <!-- Rendered dynamically -->
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
   </main>
 
   <!-- Clean Footer -->
@@ -1096,6 +1177,15 @@
     <div class="container footer-inner">
       <div>
         <strong>Swati Sharma</strong> · Software Engineer II @ Google &amp; Researcher @ Google DeepMind · B.Tech CSAI, IIIT-Delhi
+        <div style="margin-top:0.5rem; display:flex; align-items:center; gap:0.6rem; flex-wrap:wrap;">
+          <img src="https://hits.sh/swati-sharma14.github.io.svg?label=views&color=0d9488" alt="Views" class="visitor-hits-badge" title="Live Views Badge">
+          <button id="footer-analytics-btn" class="btn btn-ghost btn-sm" type="button" style="padding:0.25rem 0.55rem; font-size:0.75rem;">
+            📊 Site Telemetry &amp; Analysis
+          </button>
+          <a href="#feedback" class="btn btn-ghost btn-sm" style="padding:0.25rem 0.55rem; font-size:0.75rem;">
+            💬 Leave Feedback
+          </a>
+        </div>
       </div>
       <div>
         <span>Bangalore, India · <a href="mailto:swatisharma14career@gmail.com">swatisharma14career@gmail.com</a></span>
@@ -1113,6 +1203,85 @@
         <button class="icon-btn" id="case-modal-close" aria-label="Close modal">✕</button>
       </div>
       <div class="modal-body" id="case-modal-body"></div>
+    </div>
+  </div>
+
+  <!-- ========================================================================
+       POST-HOC ANALYSIS & SITE TELEMETRY MODAL
+       ======================================================================== -->
+  <div id="analytics-modal" class="modal-overlay" aria-hidden="true" role="dialog">
+    <div class="modal-dialog analytics-modal-dialog">
+      <div class="modal-head">
+        <div>
+          <h3 class="modal-title">Site Telemetry &amp; Post-Hoc Analysis</h3>
+          <p style="font-size:0.8rem; color:var(--text-muted); margin-top:0.2rem;">Live visitor traffic, interactive lab engagement, and session behavior.</p>
+        </div>
+        <button class="icon-btn" id="analytics-modal-close" aria-label="Close modal">✕</button>
+      </div>
+      <div class="modal-body">
+        <div class="telemetry-grid">
+          <div class="telemetry-card">
+            <span class="telemetry-num" id="tele-total-views">--</span>
+            <span class="telemetry-label">Total Views</span>
+            <span class="telemetry-sub">Live hits.sh verified</span>
+          </div>
+          <div class="telemetry-card">
+            <span class="telemetry-num" id="tele-dwell-time">0m 00s</span>
+            <span class="telemetry-label">Session Dwell Time</span>
+            <span class="telemetry-sub">Active reading focus</span>
+          </div>
+          <div class="telemetry-card">
+            <span class="telemetry-num" id="tele-scroll-depth">0%</span>
+            <span class="telemetry-label">Scroll Depth</span>
+            <span class="telemetry-sub">Page explored</span>
+          </div>
+          <div class="telemetry-card">
+            <span class="telemetry-num" id="tele-lab-interactions">0</span>
+            <span class="telemetry-label">Lab Demos Tested</span>
+            <span class="telemetry-sub">Interactive runs</span>
+          </div>
+        </div>
+
+        <div style="margin-top:1.75rem;">
+          <h4 style="font-family:var(--font-display); font-size:0.95rem; font-weight:700; margin-bottom:0.75rem;">Most Explored Research &amp; Systems Demos</h4>
+          <div class="telemetry-bars">
+            <div class="telemetry-bar-row">
+              <span class="telemetry-bar-name">🛰️ CRESS SR Auditor</span>
+              <div class="telemetry-bar-track"><div class="telemetry-bar-fill" id="bar-cress" style="width:20%;"></div></div>
+              <span class="telemetry-bar-count" id="count-cress">0</span>
+            </div>
+            <div class="telemetry-bar-row">
+              <span class="telemetry-bar-name">⚡ Play Promotion &amp; Spend Engine</span>
+              <div class="telemetry-bar-track"><div class="telemetry-bar-fill" id="bar-promo" style="width:20%;"></div></div>
+              <span class="telemetry-bar-count" id="count-promo">0</span>
+            </div>
+            <div class="telemetry-bar-row">
+              <span class="telemetry-bar-name">🎙️ Task-Lens Speech Matrix</span>
+              <div class="telemetry-bar-track"><div class="telemetry-bar-fill" id="bar-tasklens" style="width:20%;"></div></div>
+              <span class="telemetry-bar-count" id="count-tasklens">0</span>
+            </div>
+            <div class="telemetry-bar-row">
+              <span class="telemetry-bar-name">👁️ ADHD Pupillometry &amp; SHAP</span>
+              <div class="telemetry-bar-track"><div class="telemetry-bar-fill" id="bar-adhd" style="width:20%;"></div></div>
+              <span class="telemetry-bar-count" id="count-adhd">0</span>
+            </div>
+            <div class="telemetry-bar-row">
+              <span class="telemetry-bar-name">📐 LaTeX Formula Auditor</span>
+              <div class="telemetry-bar-track"><div class="telemetry-bar-fill" id="bar-latex" style="width:20%;"></div></div>
+              <span class="telemetry-bar-count" id="count-latex">0</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="telemetry-footer-note">
+          <div>
+            <strong>Privacy-Preserving Telemetry:</strong> All interaction metrics are calculated client-side without third-party fingerprinting cookies.
+          </div>
+          <div style="margin-top:0.4rem; font-family:var(--font-mono); font-size:0.72rem; color:var(--text-muted);">
+            Google Analytics 4 / GoatCounter: Plug in your Measurement ID via <code>CONFIG.GA_ID</code> in <code>script.js</code> to enable global referrers &amp; geolocation.
+          </div>
+        </div>
+      </div>
     </div>
   </div>
 

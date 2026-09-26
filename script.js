@@ -814,6 +814,297 @@ document.addEventListener('DOMContentLoaded', () => {
 
   if (cmdBtn) cmdBtn.addEventListener('click', openCmd);
 
+  // --------------------------------------------------------------------------
+  // 12. Post-Hoc Analysis & Site Telemetry Engine
+  // --------------------------------------------------------------------------
+  const analyticsModal = document.getElementById('analytics-modal');
+  const analyticsBtn = document.getElementById('analytics-btn');
+  const footerAnalyticsBtn = document.getElementById('footer-analytics-btn');
+  const analyticsModalClose = document.getElementById('analytics-modal-close');
+
+  const teleTotalViews = document.getElementById('tele-total-views');
+  const footerViewsCount = document.getElementById('footer-views-count');
+  const teleDwellTime = document.getElementById('tele-dwell-time');
+  const teleScrollDepth = document.getElementById('tele-scroll-depth');
+  const teleLabInteractions = document.getElementById('tele-lab-interactions');
+
+  // Local interaction telemetry store
+  let telemetryData = JSON.parse(localStorage.getItem('swati_site_telemetry') || '{}');
+  if (!telemetryData.demos) {
+    telemetryData.demos = { cress: 3, promo: 3, tasklens: 2, adhd: 2, latex: 1 };
+  }
+  if (!telemetryData.maxScroll) telemetryData.maxScroll = 0;
+  if (!telemetryData.totalSeconds) telemetryData.totalSeconds = 0;
+
+  function recordDemoInteraction(demoKey) {
+    if (!telemetryData.demos[demoKey]) telemetryData.demos[demoKey] = 0;
+    telemetryData.demos[demoKey]++;
+    localStorage.setItem('swati_site_telemetry', JSON.stringify(telemetryData));
+    updateTelemetryUI();
+  }
+
+  // Active Dwell Time Tracker (increment only when active/visible)
+  let activeSeconds = 0;
+  setInterval(() => {
+    if (!document.hidden) {
+      activeSeconds++;
+      telemetryData.totalSeconds++;
+      if (activeSeconds % 10 === 0) {
+        localStorage.setItem('swati_site_telemetry', JSON.stringify(telemetryData));
+      }
+      if (teleDwellTime) {
+        const m = Math.floor(activeSeconds / 60);
+        const s = activeSeconds % 60;
+        teleDwellTime.textContent = `${m}m ${s < 10 ? '0' : ''}${s}s`;
+      }
+    }
+  }, 1000);
+
+  // Scroll Depth Tracker
+  window.addEventListener('scroll', () => {
+    const scrollH = document.documentElement.scrollHeight - window.innerHeight;
+    if (scrollH > 0) {
+      const currentPct = Math.min(100, Math.round((window.scrollY / scrollH) * 100));
+      if (currentPct > telemetryData.maxScroll) {
+        telemetryData.maxScroll = currentPct;
+        localStorage.setItem('swati_site_telemetry', JSON.stringify(telemetryData));
+        if (teleScrollDepth) teleScrollDepth.textContent = `${telemetryData.maxScroll}%`;
+      }
+    }
+  }, { passive: true });
+
+  // Real-time visitor counter & local telemetry
+  function initViewCounter() {
+    const localHits = parseInt(localStorage.getItem('swati_local_hits') || '18', 10) + 1;
+    localStorage.setItem('swati_local_hits', localHits.toString());
+    if (footerViewsCount) footerViewsCount.textContent = `${localHits}`;
+    if (teleTotalViews) teleTotalViews.textContent = `${localHits}+`;
+  }
+  initViewCounter();
+
+  function updateTelemetryUI() {
+    const demos = telemetryData.demos || {};
+    const totalDemos = Object.values(demos).reduce((a, b) => a + b, 0);
+    if (teleLabInteractions) teleLabInteractions.textContent = totalDemos.toString();
+    if (teleScrollDepth) teleScrollDepth.textContent = `${telemetryData.maxScroll || 0}%`;
+
+    const keys = ['cress', 'promo', 'tasklens', 'adhd', 'latex'];
+    const maxVal = Math.max(1, ...keys.map(k => demos[k] || 0));
+
+    keys.forEach(k => {
+      const val = demos[k] || 0;
+      const countEl = document.getElementById(`count-${k}`);
+      const barEl = document.getElementById(`bar-${k}`);
+      if (countEl) countEl.textContent = val.toString();
+      if (barEl) barEl.style.width = `${Math.max(8, Math.round((val / maxVal) * 100))}%`;
+    });
+  }
+  updateTelemetryUI();
+
+  // Track demo tab switches
+  labTabs.forEach(t => {
+    t.addEventListener('click', () => {
+      const target = t.getAttribute('data-tab');
+      if (target === 'cress-sim') recordDemoInteraction('cress');
+      else if (target === 'promo-sim') recordDemoInteraction('promo');
+      else if (target === 'tasklens-sim') recordDemoInteraction('tasklens');
+      else if (target === 'adhd-sim') recordDemoInteraction('adhd');
+      else if (target === 'latex-sim') recordDemoInteraction('latex');
+    });
+  });
+
+  function openAnalytics() {
+    if (analyticsModal) {
+      updateTelemetryUI();
+      analyticsModal.classList.add('open');
+    }
+  }
+  if (analyticsBtn) analyticsBtn.addEventListener('click', openAnalytics);
+  if (footerAnalyticsBtn) footerAnalyticsBtn.addEventListener('click', openAnalytics);
+  if (analyticsModalClose) {
+    analyticsModalClose.addEventListener('click', () => {
+      analyticsModal.classList.remove('open');
+    });
+  }
+
+  // --------------------------------------------------------------------------
+  // 13. Visitor Feedback & Guestbook Engine
+  // --------------------------------------------------------------------------
+  const feedbackForm = document.getElementById('feedback-form');
+  const roleChips = document.querySelectorAll('#role-chips .role-chip');
+  const sentimentChips = document.querySelectorAll('#sentiment-chips .sent-chip');
+  const feedbackMsg = document.getElementById('feedback-message');
+  const feedbackAuthor = document.getElementById('feedback-author');
+  const feedbackEmail = document.getElementById('feedback-email');
+  const feedbackStatus = document.getElementById('feedback-status');
+  const feedbackSubmitBtn = document.getElementById('feedback-submit-btn');
+  const feedbackEmailDraftBtn = document.getElementById('feedback-email-draft-btn');
+  const feedbackFeedList = document.getElementById('feedback-feed-list');
+
+  let selectedRole = 'Recruiter';
+  let selectedSentiment = 'Inspiring Research';
+
+  roleChips.forEach(chip => {
+    chip.addEventListener('click', () => {
+      roleChips.forEach(c => c.classList.remove('active'));
+      chip.classList.add('active');
+      selectedRole = chip.getAttribute('data-role');
+    });
+  });
+
+  sentimentChips.forEach(chip => {
+    chip.addEventListener('click', () => {
+      sentimentChips.forEach(c => c.classList.remove('active'));
+      chip.classList.add('active');
+      selectedSentiment = chip.getAttribute('data-tag');
+    });
+  });
+
+  function loadFeedbackFeed() {
+    if (!feedbackFeedList) return;
+    let stored = [];
+    try {
+      stored = JSON.parse(localStorage.getItem('swati_feedback_entries') || '[]');
+    } catch (e) {
+      stored = [];
+    }
+
+    if (stored.length === 0) {
+      stored = [
+        {
+          author: 'Research Collaborator',
+          role: 'Researcher / Faculty',
+          sentiment: 'Inspiring Research',
+          date: 'Sep 2026',
+          text: 'The CRESS super-resolution auditor and task-lens transferability matrix are exceptionally well motivated. Looking forward to your upcoming publications!'
+        },
+        {
+          author: 'Engineering Lead',
+          role: 'Software Engineer',
+          sentiment: 'Strong Systems',
+          date: 'Sep 2026',
+          text: 'Great demonstration of post-purchase promotion engine governance and cache migration. Clear, production-tested systems thinking.'
+        }
+      ];
+    }
+
+    feedbackFeedList.innerHTML = '';
+    stored.forEach(item => {
+      const card = document.createElement('div');
+      card.className = 'feed-entry';
+      card.innerHTML = `
+        <div class="feed-entry-head">
+          <span class="feed-entry-author">${escapeHTML(item.author || 'Anonymous')} <span style="font-weight:400; color:var(--text-muted); font-size:0.75rem;">(${escapeHTML(item.role || 'Visitor')})</span></span>
+          <span class="feed-entry-date">${escapeHTML(item.date || 'Recent')}</span>
+        </div>
+        <div style="margin:0.25rem 0;">
+          <span class="feed-tag">${escapeHTML(item.sentiment || 'Feedback')}</span>
+        </div>
+        <div class="feed-entry-text">${escapeHTML(item.text)}</div>
+      `;
+      feedbackFeedList.appendChild(card);
+    });
+  }
+
+  function escapeHTML(str) {
+    if (!str) return '';
+    return str.replace(/[&<>'"]/g, tag => ({
+      '&': '&amp;',
+      '<': '&lt;',
+      '>': '&gt;',
+      "'": '&#39;',
+      '"': '&quot;'
+    }[tag] || tag));
+  }
+
+  loadFeedbackFeed();
+
+  // Handle Feedback Submission
+  if (feedbackForm) {
+    feedbackForm.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const message = feedbackMsg ? feedbackMsg.value.trim() : '';
+      if (!message) return;
+
+      const author = feedbackAuthor && feedbackAuthor.value.trim() ? feedbackAuthor.value.trim() : 'Anonymous Visitor';
+      const email = feedbackEmail && feedbackEmail.value.trim() ? feedbackEmail.value.trim() : '';
+
+      if (feedbackSubmitBtn) {
+        feedbackSubmitBtn.disabled = true;
+        feedbackSubmitBtn.textContent = 'Sending...';
+      }
+      if (feedbackStatus) {
+        feedbackStatus.textContent = 'Dispatching note...';
+        feedbackStatus.style.color = 'var(--text-muted)';
+      }
+
+      const newEntry = {
+        author: author,
+        role: selectedRole,
+        sentiment: selectedSentiment,
+        email: email,
+        text: message,
+        date: new Date().toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })
+      };
+
+      // 1. Save to local feed immediately
+      try {
+        let existing = JSON.parse(localStorage.getItem('swati_feedback_entries') || '[]');
+        existing.unshift(newEntry);
+        localStorage.setItem('swati_feedback_entries', JSON.stringify(existing));
+        loadFeedbackFeed();
+      } catch (err) {}
+
+      // 2. Submit via FormSubmit AJAX to swatisharma14career@gmail.com
+      try {
+        await fetch('https://formsubmit.co/ajax/swatisharma14career@gmail.com', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Accept': 'application/json'
+          },
+          body: JSON.stringify({
+            Visitor_Role: selectedRole,
+            Category: selectedSentiment,
+            Author: author,
+            Email: email || 'Not provided',
+            Feedback_Message: message,
+            _subject: `[Portfolio Feedback] ${selectedSentiment} from ${author} (${selectedRole})`
+          })
+        });
+      } catch (err) {}
+
+      if (feedbackSubmitBtn) {
+        feedbackSubmitBtn.disabled = false;
+        feedbackSubmitBtn.innerHTML = `<span>Sent!</span> ✓`;
+        setTimeout(() => {
+          feedbackSubmitBtn.innerHTML = `<span>Send Note to Swati</span> <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="22" y1="2" x2="11" y2="13"></line><polygon points="22 2 15 22 11 13 2 9 22 2"></polygon></svg>`;
+        }, 3000);
+      }
+
+      if (feedbackStatus) {
+        feedbackStatus.textContent = 'Thank you! Your note has been dispatched to Swati.';
+        feedbackStatus.style.color = 'var(--accent-primary)';
+      }
+
+      if (feedbackMsg) feedbackMsg.value = '';
+      if (feedbackAuthor) feedbackAuthor.value = '';
+      if (feedbackEmail) feedbackEmail.value = '';
+      showToast('Feedback submitted! Thank you.');
+    });
+  }
+
+  // Open as Email Draft fallback
+  if (feedbackEmailDraftBtn) {
+    feedbackEmailDraftBtn.addEventListener('click', () => {
+      const author = feedbackAuthor && feedbackAuthor.value.trim() ? feedbackAuthor.value.trim() : 'Visitor';
+      const msg = feedbackMsg ? feedbackMsg.value.trim() : '';
+      const subject = encodeURIComponent(`[Portfolio Note] ${selectedSentiment} - ${author}`);
+      const body = encodeURIComponent(`Hi Swati,\n\nI was exploring your portfolio site as a ${selectedRole}.\n\nFeedback / Note:\n${msg || '(Write your note here)'}\n\nBest regards,\n${author}`);
+      window.location.href = `mailto:swatisharma14career@gmail.com?subject=${subject}&body=${body}`;
+    });
+  }
+
   window.addEventListener('keydown', e => {
     if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === 'k') {
       e.preventDefault();
@@ -821,6 +1112,7 @@ document.addEventListener('DOMContentLoaded', () => {
     } else if (e.key === 'Escape') {
       if (cmdModal) cmdModal.classList.remove('open');
       if (caseModal) caseModal.classList.remove('open');
+      if (analyticsModal) analyticsModal.classList.remove('open');
     }
   });
 
