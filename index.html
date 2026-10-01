@@ -22,7 +22,7 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600;700&family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;0,6..72,600;1,6..72,400;1,6..72,500&family=Plus+Jakarta+Sans:wght@600;700;800&display=swap" rel="stylesheet">
 
-  <link rel="stylesheet" href="style.css?v=2.3">
+  <link rel="stylesheet" href="style.css?v=2.4">
 </head>
 <body>
 
@@ -157,12 +157,9 @@
         </div>
 
         <div class="lab-card">
-          <!-- 5 Clean Segmented Tabs -->
+          <!-- Segmented Simulation Tabs -->
           <div class="lab-nav" role="tablist">
-            <button class="lab-tab active" data-tab="cress-sim" role="tab" aria-selected="true">
-              <span>🛰️ CRESS SR Auditor (DeepMind)</span>
-            </button>
-            <button class="lab-tab" data-tab="tasklens-sim" role="tab" aria-selected="false">
+            <button class="lab-tab active" data-tab="tasklens-sim" role="tab" aria-selected="true">
               <span>🎙️ Task-Lens Speech Matrix (LREC '26)</span>
             </button>
             <button class="lab-tab" data-tab="adhd-sim" role="tab" aria-selected="false">
@@ -177,71 +174,8 @@
           </div>
 
           <div class="lab-content">
-            <!-- 1. CRESS SUPER-RESOLUTION AUDITOR -->
-            <div class="sim-pane active" id="pane-cress-sim" role="tabpanel">
-              <div class="sim-left">
-                <div class="sim-canvas-box">
-                  <canvas id="cress-canvas" class="sim-canvas" width="600" height="200"></canvas>
-                </div>
-                <div class="sim-metrics-grid">
-                  <div class="metric-card">
-                    <span class="metric-label">CRESS-C (Latent Distance ↓)</span>
-                    <span class="metric-value val-good" id="cress-c-val">0.161</span>
-                    <span class="metric-sub">d=512 Fréchet distance</span>
-                  </div>
-                  <div class="metric-card">
-                    <span class="metric-label">CRESS-R (Cross-Modal Recall ↑)</span>
-                    <span class="metric-value val-good" id="cress-r-val">95.0%</span>
-                    <span class="metric-sub">S2 ↔ Aerial RGB retrieval</span>
-                  </div>
-                  <div class="metric-card">
-                    <span class="metric-label">Conventional PSNR</span>
-                    <span class="metric-value val-warn" id="cress-psnr-val">13.8 dB</span>
-                    <span class="metric-sub">Insensitive to structure</span>
-                  </div>
-                  <div class="metric-card">
-                    <span class="metric-label">Cosine Alignment</span>
-                    <span class="metric-value val-blue" id="cress-cos-val">0.87</span>
-                    <span class="metric-sub">ResNet-18-D + SE blocks</span>
-                  </div>
-                </div>
-              </div>
-
-              <div class="sim-right">
-                <div>
-                  <h3 class="sim-title">Reference-Free Remote Sensing Super-Resolution</h3>
-                  <p class="sim-desc" style="margin-top:0.4rem;">
-                    In 10× satellite super-resolution (Sentinel-2 10m → Aerial RGB 1m), true high-resolution ground truth does not exist at inference. Traditional PSNR favors blurry outputs. CRESS audits structural fidelity by measuring latent cross-modal alignment.
-                  </p>
-                </div>
-
-                <div class="sim-control-group">
-                  <span class="sim-control-label">Reconstruction / Corruption Regime</span>
-                  <select id="cress-regime-select" class="sim-select">
-                    <option value="uvit" selected>UViT Flow-Matching 10× SR (Clean)</option>
-                    <option value="bicubic">Bicubic Interpolation (Over-Smoothed)</option>
-                    <option value="esrgan">Unconstrained GAN (Hallucinated Crop Boundaries)</option>
-                    <option value="noise">Gaussian Sensor Noise Stress-Test</option>
-                    <option value="cutout">Spatial Occlusion Stress-Test</option>
-                  </select>
-                </div>
-
-                <div class="sim-control-group">
-                  <div class="sim-control-label">
-                    <span>Corruption Severity (σ)</span>
-                    <span id="cress-severity-val" style="font-family:var(--font-mono); color:var(--accent-primary);">0.05 (Clean)</span>
-                  </div>
-                  <input type="range" id="cress-severity-slider" min="0" max="100" step="5" value="5" class="sim-slider">
-                </div>
-
-                <div class="sim-takeaway" id="cress-insight-text">
-                  <strong>Takeaway:</strong> When sensor noise or blur occurs, CRESS-C cleanly spikes from 0.161 to 1.792, while standard PSNR barely shifts—safeguarding against hallucinated parcel boundaries.
-                </div>
-              </div>
-            </div>
-
-            <!-- 2. TASK-LENS INDIAN SPEECH MATRIX -->
-            <div class="sim-pane" id="pane-tasklens-sim" role="tabpanel">
+            <!-- 1. TASK-LENS INDIAN SPEECH MATRIX -->
+            <div class="sim-pane active" id="pane-tasklens-sim" role="tabpanel">
               <div class="sim-left">
                 <div class="tl-grid" id="tl-grid">
                   <!-- Populated via script.js -->
@@ -478,7 +412,7 @@
     </section>
 
     <!-- ======================================================================
-         SECTION 2: RESEARCH THESIS & 4 PILLARS
+         SECTION 2: RESEARCH THESIS & 3 PILLARS
          ====================================================================== -->
     <section id="research" class="section">
       <div class="container">
@@ -486,7 +420,7 @@
           <span class="section-kicker">Research Program</span>
           <h2 class="section-title">Representation Power vs. Trustworthiness</h2>
           <p class="section-desc">
-            How do we evaluate whether learned representations preserve underlying domain structure before experts trust their outputs? My research investigates this across four complementary pillars.
+            How do we evaluate whether learned representations preserve underlying domain structure before experts trust their outputs? My research investigates this across three complementary pillars.
           </p>
         </div>
 
@@ -535,21 +469,6 @@
               <button class="btn btn-outline btn-sm jump-tab-btn" data-target="tasklens-sim">Launch Simulation ➔</button>
             </div>
           </div>
-
-          <!-- Pillar 4 -->
-          <div class="pillar-card">
-            <div>
-              <span class="pillar-kicker">Pillar IV · Reference-Free Vision</span>
-              <h3 class="pillar-title">CRESS: Satellite Super-Resolution</h3>
-              <p class="pillar-desc">
-                Formulated cross-modal contrastive evaluation over 1.06M Sentinel-2 (10m) and aerial RGB (1m) pairs in &lt;30 minutes (0.87 cosine similarity) to detect structural collapse in remote sensing super-resolution without high-resolution ground truth.
-              </p>
-            </div>
-            <div class="pillar-footer">
-              <span style="color:var(--text-muted);">Google DeepMind · NeurIPS TCCML '26</span>
-              <button class="btn btn-outline btn-sm jump-tab-btn" data-target="cress-sim">Launch Simulation ➔</button>
-            </div>
-          </div>
         </div>
       </div>
     </section>
@@ -563,35 +482,11 @@
           <span class="section-kicker">Peer-Reviewed &amp; Workshop Research</span>
           <h2 class="section-title">Selected Publications</h2>
           <p class="section-desc">
-            Three first-authored papers and a NeurIPS workshop poster spanning remote sensing, low-resource speech, and clinical biosignals.
+            First-authored conference, journal, and workshop publications spanning low-resource speech and clinical biosignals.
           </p>
         </div>
 
         <div class="pub-list">
-          <!-- CRESS -->
-          <article class="pub-item" data-era="during-google">
-            <div class="pub-meta-row">
-              <span class="pub-badge">[W.1] Workshop Paper · First Author</span>
-              <span class="pub-venue">NeurIPS TCCML Workshop 2026 (Under Review)</span>
-            </div>
-            <h3 class="pub-title">CRESS: Cross-Modal Reference-Free Evaluation for Remote Sensing Super-Resolution</h3>
-            <p class="pub-authors"><strong>Swati Sharma</strong>, Aishwarya Jayagopal, et al. (Google DeepMind, 2026)</p>
-            <p class="pub-abstract">
-              Introduces a reference-free evaluation framework for 10× satellite super-resolution over agricultural regions in India. Trains a CLIP-style dual encoder over 1.06M Sentinel-2 (10m) and aerial RGB (1m) pairs in &lt;30 minutes. Latent Fréchet distance (CRESS-C) and cross-modal recall (CRESS-R) audit structural hallucinations where PSNR and SSIM fail.
-            </p>
-            <div class="pub-actions">
-              <button class="btn btn-outline btn-sm toggle-bib-btn" data-bib="bib-cress">BibTeX</button>
-              <button class="btn btn-ghost btn-sm copy-bib-btn" data-bib="bib-cress">Copy BibTeX</button>
-              <button class="btn btn-ghost btn-sm jump-tab-btn" data-target="cress-sim">Interactive Demo ➔</button>
-            </div>
-            <pre class="bibtex-box" id="bib-cress">@inproceedings{sharma2026cress,
-  author    = {Sharma, Swati and Jayagopal, Aishwarya and others},
-  title     = {{CRESS}: Cross-Modal Reference-Free Evaluation for Remote Sensing Super-Resolution},
-  booktitle = {NeurIPS Workshop on Tackling Climate Change with Machine Learning (TCCML)},
-  year      = {2026},
-  note      = {Under Review}
-}</pre>
-          </article>
 
           <!-- Task-Lens -->
           <article class="pub-item" data-era="before-google">
@@ -1077,7 +972,7 @@
             <div class="repl-output" id="repl-output"></div>
             <div class="repl-input-row">
               <span style="color:#38bdf8;">visitor@swati:~$</span>
-              <input type="text" id="repl-input" class="repl-input" placeholder="Type 'help', 'cress', 'tasklens', 'thesis'..." autocomplete="off" spellcheck="false">
+              <input type="text" id="repl-input" class="repl-input" placeholder="Type 'help', 'tasklens', 'thesis'..." autocomplete="off" spellcheck="false">
             </div>
           </div>
         </div>
@@ -1206,11 +1101,6 @@
         <div style="margin-top:1.75rem;">
           <h4 style="font-family:var(--font-display); font-size:0.95rem; font-weight:700; margin-bottom:0.75rem;">Most Explored Research &amp; Systems Demos</h4>
           <div class="telemetry-bars">
-            <div class="telemetry-bar-row">
-              <span class="telemetry-bar-name">🛰️ CRESS SR Auditor</span>
-              <div class="telemetry-bar-track"><div class="telemetry-bar-fill" id="bar-cress" style="width:20%;"></div></div>
-              <span class="telemetry-bar-count" id="count-cress">0</span>
-            </div>
             <div class="telemetry-bar-row">
               <span class="telemetry-bar-name">⚡ Play Promotion &amp; Spend Engine</span>
               <div class="telemetry-bar-track"><div class="telemetry-bar-fill" id="bar-promo" style="width:20%;"></div></div>

@@ -26,9 +26,8 @@ portfolio/
 1. **Global Era Switcher (`Before Google` vs. `During Google` vs. `All Eras`)**:
    - Dynamically filters the entire website—experience timeline, interactive research labs, publications, and project cards—between your IIIT-Delhi & NatWest years (`2021–2025`) and your Google & Google DeepMind work (`2025–Present`).
 2. **Hero Interactive Terminal (`swati@portfolio:~`)**:
-   - Supports commands: `help`, `era [all|google|before]`, `research`, `cress`, `speech`, `adhd`, `latex`, `play`, `pubs`, `awards`, `cp`, `resume`, `theme`, `clear`.
-3. **Interactive Research & Systems Lab (5 Live Simulations)**:
-   - **CRESS Super-Resolution Auditor (Google DeepMind · ICLR 2026 TCCML)**: Real-time HTML5 Canvas rendering of LR input, SR reconstruction, and pixel-level spatial artifact heatmaps across 4 corruptions (Hallucinated Texture, Over-Sharpening, Color Shift, Clean Reconstruction) with an intensity slider showing how CRESS-C & CRESS-R respond while PSNR fails.
+   - Supports commands: `help`, `era [all|google|before]`, `research`, `speech`, `adhd`, `latex`, `play`, `pubs`, `awards`, `cp`, `resume`, `theme`, `clear`.
+3. **Interactive Research & Systems Lab (4 Live Simulations)**:
    - **Task-Lens Speech Utility Matrix (LREC 2026)**: Interactive 26-language, 50-dataset, 9-task transferability explorer comparing Whisper-large-v3, XLS-R, MMS-1B, and HuBERT across ASR, Intent, Emotion, Speaker ID, LID, Dialect, SER, QA, and Paralinguistics.
    - **ADHD Pupillometry & SHAP Clinical Explorer (Computers in Biology and Medicine 2025)**: Live physiological pupillometry trace canvas across 5 cognitive-load phases (`Baseline` → `Stimulus` → `Peak Load` → `Recovery`) paired with real-time SHAP feature attribution bars across patient cohorts.
    - **`LaTeXOCREvaluator` Live Formula Sandbox (IIIT-Delhi CV)**: Live tokenizer and structural delimiter auditor computing the 4-component composite score (`0.40 Sequence + 0.20 Structure + 0.25 Symbol + 0.15 Length`) in real time as you type or test presets.

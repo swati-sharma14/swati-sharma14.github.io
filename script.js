@@ -55,7 +55,6 @@ document.addEventListener('DOMContentLoaded', () => {
     const next = cur === 'light' ? 'dark' : 'light';
     document.documentElement.setAttribute('data-theme', next);
     localStorage.setItem('swati_portfolio_theme', next);
-    drawCress();
     drawAdhd();
   }
 
@@ -109,7 +108,6 @@ document.addEventListener('DOMContentLoaded', () => {
       p.classList.toggle('active', p.id === `pane-${tabId}`);
     });
 
-    if (tabId === 'cress-sim') drawCress();
     if (tabId === 'adhd-sim') drawAdhd();
 
     if (scrollTo) {
@@ -130,203 +128,7 @@ document.addEventListener('DOMContentLoaded', () => {
   });
 
   // --------------------------------------------------------------------------
-  // 5. SIMULATION 1: CRESS Super-Resolution Auditor (Google DeepMind)
-  // --------------------------------------------------------------------------
-  const cressCanvas = document.getElementById('cress-canvas');
-  const cressRegimeSelect = document.getElementById('cress-regime-select');
-  const cressSeveritySlider = document.getElementById('cress-severity-slider');
-  const cressSeverityVal = document.getElementById('cress-severity-val');
-  const cressCVal = document.getElementById('cress-c-val');
-  const cressRVal = document.getElementById('cress-r-val');
-  const cressPsnrVal = document.getElementById('cress-psnr-val');
-  const cressCosVal = document.getElementById('cress-cos-val');
-  const cressInsightText = document.getElementById('cress-insight-text');
-
-  function drawCress() {
-    if (!cressCanvas) return;
-    const ctx = cressCanvas.getContext('2d');
-    const w = cressCanvas.width;
-    const h = cressCanvas.height;
-    const regime = cressRegimeSelect ? cressRegimeSelect.value : 'uvit';
-    const sev = cressSeveritySlider ? Number(cressSeveritySlider.value) : 5;
-    const s = sev / 100;
-
-    if (cressSeverityVal) {
-      cressSeverityVal.textContent = `${s.toFixed(2)} (${sev < 20 ? 'Clean' : sev < 60 ? 'Moderate' : 'Severe'})`;
-    }
-
-    let cressC = 0.161;
-    let cressR = 95.0;
-    let psnr = 13.8;
-    let cos = 0.87;
-    let insight = '';
-
-    if (regime === 'uvit') {
-      cressC = 0.161 + s * 0.45;
-      cressR = 95.0 - s * 18.0;
-      psnr = 13.8 - s * 0.5;
-      cos = 0.87 - s * 0.08;
-      insight = `<strong>Takeaway:</strong> Under clean UViT flow-matching, CRESS-C remains low (<strong>${cressC.toFixed(3)}</strong>) and retrieval recall reaches <strong>${cressR.toFixed(1)}%</strong>, verifying agricultural field boundary preservation.`;
-    } else if (regime === 'bicubic') {
-      cressC = 0.480 + s * 0.52;
-      cressR = 85.5 - s * 22.0;
-      psnr = 14.9 - s * 0.4;
-      cos = 0.78 - s * 0.10;
-      insight = `<strong>Takeaway:</strong> PSNR (${psnr.toFixed(1)} dB) misleadingly rewards blurry interpolation, whereas CRESS-C (<strong>${cressC.toFixed(3)}</strong>) catches the erased parcel boundaries.`;
-    } else if (regime === 'esrgan') {
-      cressC = 0.740 + s * 0.68;
-      cressR = 63.0 - s * 28.0;
-      psnr = 12.9 - s * 0.5;
-      cos = 0.68 - s * 0.16;
-      insight = `<strong>Takeaway:</strong> Unconstrained GAN hallucinates unfaithful boundaries. Retrieval recall drops to <strong>${cressR.toFixed(1)}%</strong> because the 1m tile decouples from its Sentinel-2 conditioning anchor.`;
-    } else if (regime === 'noise') {
-      cressC = 0.220 + s * 1.572;
-      cressR = 92.0 - s * 70.0;
-      psnr = 12.6 - s * 1.1;
-      cos = 0.85 - s * 0.48;
-      insight = `<strong>Takeaway:</strong> Gaussian sensor noise causes CRESS-C to spike to <strong>${cressC.toFixed(3)}</strong> and recall to collapse to <strong>${cressR.toFixed(1)}%</strong>, while PSNR remains largely flat.`;
-    } else {
-      cressC = 0.250 + s * 1.48;
-      cressR = 90.0 - s * 66.0;
-      psnr = 13.1 - s * 0.9;
-      cos = 0.84 - s * 0.44;
-      insight = `<strong>Takeaway:</strong> Spatial occlusion causes rapid divergence in the d=512 representation space (CRESS-C = <strong>${cressC.toFixed(3)}</strong>).`;
-    }
-
-    if (cressCVal) {
-      cressCVal.textContent = cressC.toFixed(3);
-      cressCVal.className = `metric-value ${cressC < 0.45 ? 'val-good' : cressC < 0.95 ? 'val-warn' : 'val-bad'}`;
-    }
-    if (cressRVal) {
-      cressRVal.textContent = `${cressR.toFixed(1)}%`;
-      cressRVal.className = `metric-value ${cressR > 75 ? 'val-good' : cressR > 45 ? 'val-warn' : 'val-bad'}`;
-    }
-    if (cressPsnrVal) cressPsnrVal.textContent = `${psnr.toFixed(1)} dB`;
-    if (cressCosVal) cressCosVal.textContent = cos.toFixed(2);
-    if (cressInsightText) cressInsightText.innerHTML = insight;
-
-    // Canvas rendering (3 panels)
-    ctx.fillStyle = '#080d1a';
-    ctx.fillRect(0, 0, w, h);
-
-    // Panel 1: S2 Low-Res (10m)
-    drawTile(ctx, 10, 26, 175, 155, { blocky: true, regime: 's2', s: 0 });
-    // Panel 2: SR Output (1m)
-    drawTile(ctx, 205, 26, 175, 155, { blocky: regime === 'bicubic', regime, s });
-    // Panel 3: d=512 Latent Embedding Distance
-    drawLatent(ctx, 400, 26, 190, 155, cressC, cressR);
-
-    ctx.fillStyle = '#94a3b8';
-    ctx.font = '600 10px "JetBrains Mono", monospace';
-    ctx.fillText('1. SENTINEL-2 (10m)', 10, 18);
-    ctx.fillText('2. 10× SR OUTPUT (1m)', 205, 18);
-    ctx.fillText('3. CRESS d=512 SPACE', 400, 18);
-  }
-
-  function drawTile(ctx, x, y, w, h, opt) {
-    ctx.save();
-    ctx.beginPath();
-    ctx.rect(x, y, w, h);
-    ctx.clip();
-
-    const cols = opt.blocky ? 8 : 32;
-    const rows = opt.blocky ? 8 : 32;
-    const cw = w / cols;
-    const ch = h / rows;
-
-    for (let r = 0; r < rows; r++) {
-      for (let c = 0; c < cols; c++) {
-        const nx = c / cols;
-        const ny = r / rows;
-        const inA = nx < 0.5 && ny < 0.55;
-        const inB = nx >= 0.5 && ny < 0.45;
-        let g = inA ? 130 : inB ? 90 : 150;
-        let red = inA ? 60 : inB ? 85 : 70;
-        let b = 45;
-
-        if (opt.regime === 'esrgan') {
-          const shift = Math.sin(nx * 20 + opt.s * 6) * 35;
-          g += shift;
-          red += shift * 0.6;
-        }
-        if (opt.regime === 'noise') {
-          const n = (Math.sin(r * 13 + c * 29) * 80) * opt.s;
-          g += n;
-          red += n;
-          b += n;
-        }
-
-        ctx.fillStyle = `rgb(${Math.max(0, Math.min(255, Math.round(red)))}, ${Math.max(0, Math.min(255, Math.round(g)))}, ${Math.max(0, Math.min(255, Math.round(b)))})`;
-        ctx.fillRect(x + c * cw, y + r * ch, Math.ceil(cw), Math.ceil(ch));
-      }
-    }
-
-    if (!opt.blocky) {
-      ctx.strokeStyle = opt.regime === 'esrgan' ? '#fbbf24' : '#e2e8f0';
-      ctx.lineWidth = 1.5;
-      ctx.beginPath();
-      ctx.moveTo(x + w * 0.5, y);
-      ctx.lineTo(x + w * 0.45, y + h);
-      ctx.moveTo(x, y + h * 0.55);
-      ctx.lineTo(x + w, y + h * 0.45);
-      ctx.stroke();
-    }
-
-    if (opt.regime === 'cutout' && opt.s > 0.05) {
-      ctx.fillStyle = '#060a12';
-      ctx.fillRect(x + w * 0.25, y + h * 0.25, 40 + opt.s * 50, 35 + opt.s * 40);
-    }
-
-    ctx.restore();
-    ctx.strokeStyle = '#1e293b';
-    ctx.strokeRect(x, y, w, h);
-  }
-
-  function drawLatent(ctx, x, y, w, h, cressC, cressR) {
-    ctx.fillStyle = '#0f172a';
-    ctx.fillRect(x, y, w, h);
-    ctx.strokeStyle = '#1e293b';
-    ctx.strokeRect(x, y, w, h);
-
-    const cx = x + 45;
-    const cy = y + h / 2;
-
-    ctx.fillStyle = '#38bdf8';
-    ctx.beginPath();
-    ctx.arc(cx, cy, 6, 0, Math.PI * 2);
-    ctx.fill();
-
-    const drift = Math.min(95, (cressC / 1.8) * 85);
-    const sx = cx + drift;
-    const sy = cy - drift * 0.2;
-
-    ctx.strokeStyle = cressC < 0.45 ? '#4ade80' : cressC < 0.95 ? '#fbbf24' : '#f87171';
-    ctx.lineWidth = 2;
-    ctx.beginPath();
-    ctx.moveTo(cx, cy);
-    ctx.lineTo(sx, sy);
-    ctx.stroke();
-
-    ctx.fillStyle = ctx.strokeStyle;
-    ctx.beginPath();
-    ctx.arc(sx, sy, 6, 0, Math.PI * 2);
-    ctx.fill();
-
-    ctx.fillStyle = '#94a3b8';
-    ctx.font = '10px "JetBrains Mono", monospace';
-    ctx.fillText('S2 Anchor', cx - 22, cy + 18);
-    ctx.fillStyle = '#ffffff';
-    ctx.fillText(`SR Tile (d=${cressC.toFixed(2)})`, Math.min(x + w - 85, sx - 10), sy - 10);
-    ctx.fillStyle = '#38bdf8';
-    ctx.fillText(`Recall@K: ${cressR.toFixed(1)}%`, x + 12, y + h - 12);
-  }
-
-  if (cressRegimeSelect) cressRegimeSelect.addEventListener('change', drawCress);
-  if (cressSeveritySlider) cressSeveritySlider.addEventListener('input', drawCress);
-  drawCress();
-
-  // --------------------------------------------------------------------------
-  // 6. SIMULATION 2: Task-Lens Indian Speech Grid (LREC 2026)
+  // 5. SIMULATION 1: Task-Lens Indian Speech Grid (LREC 2026)
   // --------------------------------------------------------------------------
   const tlGrid = document.getElementById('tl-grid');
   const tlLangSelect = document.getElementById('tl-lang-select');
@@ -724,11 +526,10 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   const replResponses = {
-    help: 'Commands: thesis, google, iiitd, cress, tasklens, adhd, bibtex, clear',
+    help: 'Commands: thesis, google, iiitd, tasklens, adhd, bibtex, clear',
     thesis: 'Core Thesis: How to build multimodal representations that are interpretable, utility-aware, and reference-free.',
-    google: 'During Google: SWE II on Google Play Post-Purchase Promotions (P3) & Researcher 20% Time at DeepMind (CRESS).',
+    google: 'During Google: SWE II on Google Play Post-Purchase Promotions (P3) & Researcher 20% Time at DeepMind.',
     iiitd: 'Before Google: B.Tech CSAI @ IIIT-Delhi (GPA 8.36/10), HMI Lab (ADHD in CIBM 2025), SBILab (Task-Lens at LREC 2026).',
-    cress: 'CRESS: Dual-encoder reference-free evaluation for satellite super-resolution (NeurIPS TCCML 2026).',
     tasklens: 'Task-Lens: Cross-task speech profiling across 50 Indian datasets, 90K+ hours, 26 languages (LREC 2026).',
     adhd: 'ADHD: Temporal pupil dynamics & SHAP (~90% accuracy, Computers in Biology and Medicine 2025).'
   };
@@ -773,7 +574,6 @@ document.addEventListener('DOMContentLoaded', () => {
   const cmdResults = document.getElementById('cmd-results');
 
   const actions = [
-    { label: '🛰️ Launch CRESS Super-Resolution Auditor', cat: 'Lab', run: () => switchLabTab('cress-sim', true) },
     { label: '🎙️ Launch Task-Lens Indian Speech Matrix', cat: 'Lab', run: () => switchLabTab('tasklens-sim', true) },
     { label: '👁️ Launch ADHD Pupillometry & SHAP Simulation', cat: 'Lab', run: () => switchLabTab('adhd-sim', true) },
     { label: '📐 Launch LaTeX Formula Auditor Sandbox', cat: 'Lab', run: () => switchLabTab('latex-sim', true) },
@@ -830,7 +630,7 @@ document.addEventListener('DOMContentLoaded', () => {
   // Local interaction telemetry store
   let telemetryData = JSON.parse(localStorage.getItem('swati_site_telemetry') || '{}');
   if (!telemetryData.demos) {
-    telemetryData.demos = { cress: 3, promo: 3, tasklens: 2, adhd: 2, latex: 1 };
+    telemetryData.demos = { promo: 3, tasklens: 2, adhd: 2, latex: 1 };
   }
   if (!telemetryData.maxScroll) telemetryData.maxScroll = 0;
   if (!telemetryData.totalSeconds) telemetryData.totalSeconds = 0;
@@ -889,7 +689,7 @@ document.addEventListener('DOMContentLoaded', () => {
     if (teleLabInteractions) teleLabInteractions.textContent = totalDemos.toString();
     if (teleScrollDepth) teleScrollDepth.textContent = `${telemetryData.maxScroll || 0}%`;
 
-    const keys = ['cress', 'promo', 'tasklens', 'adhd', 'latex'];
+    const keys = ['promo', 'tasklens', 'adhd', 'latex'];
     const maxVal = Math.max(1, ...keys.map(k => demos[k] || 0));
 
     keys.forEach(k => {
@@ -906,8 +706,7 @@ document.addEventListener('DOMContentLoaded', () => {
   labTabs.forEach(t => {
     t.addEventListener('click', () => {
       const target = t.getAttribute('data-tab');
-      if (target === 'cress-sim') recordDemoInteraction('cress');
-      else if (target === 'promo-sim') recordDemoInteraction('promo');
+      if (target === 'promo-sim') recordDemoInteraction('promo');
       else if (target === 'tasklens-sim') recordDemoInteraction('tasklens');
       else if (target === 'adhd-sim') recordDemoInteraction('adhd');
       else if (target === 'latex-sim') recordDemoInteraction('latex');
